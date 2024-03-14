@@ -4,15 +4,6 @@ using UnityEngine;
 
 public abstract class AInteractObject: MonoBehaviour
 {
-    protected GameInput gameInput = GameInput.getInstance();
-
-
-    protected bool isInteractionButtonPressed() {
-
-        return gameInput.getInputAction().Player.Interact.triggered;
-
-    }
-
     public abstract void Interact(bool canInteract);
 
     public GameObject GetVisualObject() { 

@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 
-public class GameInput : MonoBehaviour
+public class GameInput : ASubject
 {
 
     private static GameInput gameInput = null;
@@ -46,5 +46,22 @@ public class GameInput : MonoBehaviour
 
         return gameInput;
 
+    }
+
+    public override void addObserver(AObserver observer)
+    {
+        this.observers.Add(observer);
+    }
+
+    public override void removeObserver(AObserver observer)
+    {
+        this.observers.Remove(observer);
+    }
+
+    public override void notifyObservers()
+    {
+        foreach ( AObserver observer in this.observers ) {
+            observer.update();
+        }
     }
 }
