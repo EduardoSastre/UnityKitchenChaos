@@ -2,28 +2,31 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ClearCounter :  AbstInteractObject
+public class ClearCounter :  AInteractable
 {
 
     [SerializeField] private KitchenObjectSO kitchenObjectSO;
-    [SerializeField] private Transform counterTopPoint;
+    private GameObject kitchenObject;
 
-    private void Start()
-    {
-        counterTopPoint = this.transform.GetChild(2).transform;
-    }
-
-    public override void Interact(bool canInteract) {
+    public override void Interact(bool canInteract, AInteractable interactObject) {
 
         SelectedInteractableObject.PerformVisualInteraction(this, canInteract);
 
-        if ( canInteract && !CheckObject.isNullOrEmpty(kitchenObjectSO.prefab) ) {
+        Debug.Log(interactObject.name);
 
-            GameObject kitchenObject = Instantiate(kitchenObjectSO.prefab, counterTopPoint);
+        if ( canInteract && kitchenObject == null && !CheckObject.isNullOrEmpty(kitchenObjectSO.prefab) ) {
+
+            kitchenObject = Instantiate(kitchenObjectSO.prefab, pickPoint);
             kitchenObject.transform.localPosition = Vector3.zero;
-            kitchenObject.GetComponent<KitchenObject>().setClearCounter(this);
+            kitchenObject.GetComponent<KitchenObject>().setParent(this);
 
         }
+
+        if (canInteract && kitchenObject != null)
+        {
+            kitchenObject.GetComponent<KitchenObject>().setParent(interactObject);
+        }
+
 
     }
 }

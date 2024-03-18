@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.Windows;
 
-public class Player : MonoBehaviour
+public class Player : AInteractable
 {
     [SerializeField] private float moveSpeed = 7f;
     [SerializeField] private GameInput gameInput;
@@ -19,7 +19,7 @@ public class Player : MonoBehaviour
     private const float PLAYER_HEIGHT = 2f;
     
     private Vector3 moveDirection;
-    private AbstInteractObject lastObjectThatInteract;
+    private AInteractable lastObjectThatInteract;
 
     private void Start()
     {
@@ -37,10 +37,10 @@ public class Player : MonoBehaviour
 
     private void HandleInteractions() {
 
-        GetObjectThatCollide(out bool isPlayerNear, out AbstInteractObject interactObject);
+        GetObjectThatCollide(out bool isPlayerNear, out AInteractable interactObject);
 
         if (interactObject != null && lastObjectThatInteract != null && interactObject != lastObjectThatInteract) {
-            lastObjectThatInteract.Interact(false);
+            lastObjectThatInteract.Interact(false, this);
         }
 
         lastObjectThatInteract = interactObject ?? lastObjectThatInteract;
@@ -49,11 +49,11 @@ public class Player : MonoBehaviour
 
         if (lastObjectThatInteract != null)
         {
-            lastObjectThatInteract.Interact(isPlayerNear && isPlayerInteracting);
+            lastObjectThatInteract.Interact(isPlayerNear && isPlayerInteracting, this);
         }
 
     }
-    private void GetObjectThatCollide( out bool isPlayerNear, out AbstInteractObject interactObject)
+    private void GetObjectThatCollide( out bool isPlayerNear, out AInteractable interactObject)
     {
         float interactDistance = PLAYER_WEIGHT;
         interactObject = null;
@@ -105,5 +105,10 @@ public class Player : MonoBehaviour
         float rotateSpeed = 10f;
         transform.forward = Vector3.Slerp(transform.forward, moveDirection, Time.deltaTime * rotateSpeed); //To get Smoother movement
 
+    }
+
+    public override void Interact(bool canInteract, AInteractable interactableObject)
+    {
+        
     }
 }

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class SelectedInteractableObject : MonoBehaviour
 {
-    public static void PerformVisualInteraction( AbstInteractObject interactObject, bool isActive ) { 
+    public static void PerformVisualInteraction( AInteractable interactObject, bool isActive ) { 
     
         interactObject.GetVisualObject().SetActive(isActive);
     

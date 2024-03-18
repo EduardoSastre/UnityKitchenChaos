@@ -6,17 +6,18 @@ public abstract class KitchenObject : MonoBehaviour
 {
     [SerializeField] KitchenObjectSO kitchenObjectSO;
 
-    private ClearCounter clearCounter;
+    private AInteractable interactableObject;
 
 
     public KitchenObjectSO GetKitchenObjectSO() { return kitchenObjectSO; }
 
-    public  ClearCounter getClearCounter() { 
-        return clearCounter;
+    public  AInteractable getClearCounter() { 
+        return interactableObject;
     }
 
-    public void setClearCounter( ClearCounter clearCounter ) {
-        this.clearCounter = clearCounter;
+    public void setParent( AInteractable interactableObject ) {
+        this.interactableObject = interactableObject;
+        this.transform.parent = interactableObject.GetPickPoint();
     }
 
 }
