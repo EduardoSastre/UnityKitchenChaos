@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class AInteractObject: MonoBehaviour
+public abstract class AbstInteractObject: MonoBehaviour
 {
     public abstract void Interact(bool canInteract);
 

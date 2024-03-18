@@ -12,12 +12,14 @@ public class Player : MonoBehaviour
     [SerializeField] private LayerMask clearCounterLayerMask;
 
     private bool isWalking;
+    private bool canMove;
+
     private const float PLAYER_RADIUS = 0.7f;
     private const float PLAYER_WEIGHT = PLAYER_RADIUS*3;
     private const float PLAYER_HEIGHT = 2f;
-    private bool canMove;
+    
     private Vector3 moveDirection;
-    private AInteractObject lastObjectThatInteract;
+    private AbstInteractObject lastObjectThatInteract;
 
     private void Start()
     {
@@ -35,7 +37,7 @@ public class Player : MonoBehaviour
 
     private void HandleInteractions() {
 
-        GetObjectThatCollide(out bool isPlayerNear, out AInteractObject interactObject);
+        GetObjectThatCollide(out bool isPlayerNear, out AbstInteractObject interactObject);
 
         if (interactObject != null && lastObjectThatInteract != null && interactObject != lastObjectThatInteract) {
             lastObjectThatInteract.Interact(false);
@@ -51,7 +53,7 @@ public class Player : MonoBehaviour
         }
 
     }
-    private void GetObjectThatCollide( out bool isPlayerNear, out AInteractObject interactObject)
+    private void GetObjectThatCollide( out bool isPlayerNear, out AbstInteractObject interactObject)
     {
         float interactDistance = PLAYER_WEIGHT;
         interactObject = null;
