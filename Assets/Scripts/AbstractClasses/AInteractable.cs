@@ -6,12 +6,14 @@ public abstract class AInteractable: MonoBehaviour
 {
     protected Transform pickPoint;
 
-    private void Start()
+    protected void SetPickPoint()
     {
-        this.pickPoint = this.transform.GetChild(2);
+        this.pickPoint = this.transform.Find("PickPoint");
     }
 
-    public abstract void Interact(bool canInteract, AInteractable interactableObject);
+    public abstract void Interact(AInteractable interactableObject);
+
+    public abstract void CancelInteract();
 
     public GameObject GetVisualObject() { 
         return this.transform.GetChild(0).GetChild(0).gameObject;

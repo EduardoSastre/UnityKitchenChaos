@@ -15,16 +15,21 @@ public class Player : AInteractable
     private bool canMove;
 
     private const float PLAYER_RADIUS = 0.7f;
-    private const float PLAYER_WEIGHT = PLAYER_RADIUS*3;
+    private const float INTERACT_DISTANCE = PLAYER_RADIUS*3;
     private const float PLAYER_HEIGHT = 2f;
     
     private Vector3 moveDirection;
     private AInteractable lastObjectThatInteract;
+    private SelectedCounterVisual selectedCounterVisual;
+    private bool isInteractableObjectNear;
 
     private void Start()
     {
         gameInput = GameInput.getInstance();
+        selectedCounterVisual = gameObject.AddComponent<SelectedCounterVisual>();
+        SetPickPoint();
     }
+
     private void Update()
     {
         HandleMovement();
@@ -37,32 +42,39 @@ public class Player : AInteractable
 
     private void HandleInteractions() {
 
-        GetObjectThatCollide(out bool isPlayerNear, out AInteractable interactObject);
+        AInteractable currentObject = GetObjectThatCollide();
 
-        if (interactObject != null && lastObjectThatInteract != null && interactObject != lastObjectThatInteract) {
-            lastObjectThatInteract.Interact(false, this);
-        }
+        lastObjectThatInteract = currentObject ?? lastObjectThatInteract;
 
-        lastObjectThatInteract = interactObject ?? lastObjectThatInteract;
+        bool shouldPerformVisual = gameInput.IsInteractionPerformed();
+        bool isPlayerInteracting = gameInput.IsInteractionPressed();
 
-        bool isPlayerInteracting = gameInput.IsInteractionPerformed();
-
-        if (lastObjectThatInteract != null)
+        if (shouldPerformVisual && !CheckObject.isNullOrEmpty(currentObject) )
         {
-            lastObjectThatInteract.Interact(isPlayerNear && isPlayerInteracting, this);
+            //lastObjectThatInteract.Interact(this);
+            selectedCounterVisual.setCounter(lastObjectThatInteract);
+            
+        }
+        selectedCounterVisual.setShouldInteract(isInteractableObjectNear);
+
+        if (isPlayerInteracting && !CheckObject.isNullOrEmpty(currentObject))
+        {
+            lastObjectThatInteract.Interact(this);
+
         }
 
     }
-    private void GetObjectThatCollide( out bool isPlayerNear, out AInteractable interactObject)
+    private AInteractable GetObjectThatCollide()
     {
-        float interactDistance = PLAYER_WEIGHT;
-        interactObject = null;
-        isPlayerNear = Physics.Raycast(transform.position, transform.forward, out RaycastHit raycastHit, interactDistance, clearCounterLayerMask);
+        AInteractable interactObject = null;
 
-        if (isPlayerNear) {
+        isInteractableObjectNear = Physics.Raycast(transform.position, transform.forward, out RaycastHit raycastHit, INTERACT_DISTANCE, clearCounterLayerMask);
+
+        if (isInteractableObjectNear) {
             raycastHit.collider.gameObject.TryGetComponent(out interactObject);
         }
         
+        return interactObject;
     }
 
     private void HandleMovement() {
@@ -107,8 +119,13 @@ public class Player : AInteractable
 
     }
 
-    public override void Interact(bool canInteract, AInteractable interactableObject)
+    public override void Interact(AInteractable interactableObject)
     {
         
+    }
+
+    public override void CancelInteract()
+    {
+        throw new NotImplementedException();
     }
 }

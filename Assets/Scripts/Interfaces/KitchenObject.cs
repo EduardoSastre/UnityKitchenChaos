@@ -2,22 +2,23 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class KitchenObject : MonoBehaviour 
+public class KitchenObject : MonoBehaviour 
 {
     [SerializeField] KitchenObjectSO kitchenObjectSO;
 
-    private AInteractable interactableObject;
-
+    private AInteractable parentObject;
 
     public KitchenObjectSO GetKitchenObjectSO() { return kitchenObjectSO; }
 
-    public  AInteractable getClearCounter() { 
-        return interactableObject;
+    public  AInteractable getParentObject() { 
+        return parentObject;
     }
 
-    public void setParent( AInteractable interactableObject ) {
-        this.interactableObject = interactableObject;
+    /*public void setParent( AInteractable interactableObject ) {
+        this.parentObject = interactableObject;
+
+        Debug.Log(interactableObject.name);
         this.transform.parent = interactableObject.GetPickPoint();
-    }
+    }*/
 
 }

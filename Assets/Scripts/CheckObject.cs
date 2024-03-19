@@ -10,6 +10,13 @@ public class CheckObject
     
     }
 
+    public static bool isNullOrEmpty(AInteractable gameObject)
+    {
+
+        return gameObject == null || gameObject.name == null || gameObject.name == "";
+
+    }
+
     public static bool isNullOrEmpty(KitchenObject gameObject)
     {
 

@@ -69,6 +69,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 73d2c1babb2cde743a043b9e1426b011, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  kitchenObjectSO: {fileID: 0}
 --- !u!1 &4253251758424494159
 GameObject:
   m_ObjectHideFlags: 0
@@ -79,7 +80,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5380241753351168662}
   m_Layer: 0
-  m_Name: CounterTopPoint
+  m_Name: PickPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

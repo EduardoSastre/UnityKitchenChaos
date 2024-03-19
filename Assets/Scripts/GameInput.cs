@@ -5,8 +5,9 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 
-public class GameInput : ASubject
+public class GameInput : AVisualSubject
 {
+    public event EventHandler OnInteractAction;
 
     private static GameInput gameInput = null;
 
@@ -20,16 +21,20 @@ public class GameInput : ASubject
         inputActions = new PlayerInputActions();
         gameInput = this; //Unity by default creates an instance of this object when its loaded
         inputActions.Player.Enable();
-
     }
 
-    private void Start()
+    private void Update()
     {
-
+            notifyObservers(IsInteractionPerformed());
     }
 
     public bool IsInteractionPerformed() { 
         return inputActions.Player.Interact.IsPressed();
+    }
+
+    public bool IsInteractionPressed()
+    {
+        return inputActions.Player.Interact.triggered;
     }
 
     public Vector2 GetMovementVectorNormalized() {
@@ -48,20 +53,20 @@ public class GameInput : ASubject
 
     }
 
-    public override void addObserver(AObserver observer)
+    public override void addObserver(AVisualObserver observer)
     {
         this.observers.Add(observer);
     }
 
-    public override void removeObserver(AObserver observer)
+    public override void removeObserver(AVisualObserver observer)
     {
         this.observers.Remove(observer);
     }
 
-    public override void notifyObservers()
+    public override void notifyObservers( bool isInteractionPerformed )
     {
-        foreach ( AObserver observer in this.observers ) {
-            observer.update();
+        foreach ( AVisualObserver observer in this.observers ) {
+            observer.Actualize(isInteractionPerformed);
         }
     }
 }
