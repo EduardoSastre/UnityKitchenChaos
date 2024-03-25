@@ -17,9 +17,9 @@ public class Player : AInteractable
     private const float PLAYER_RADIUS = 0.7f;
     private const float INTERACT_DISTANCE = PLAYER_RADIUS*3;
     private const float PLAYER_HEIGHT = 2f;
-    
+
     private Vector3 moveDirection;
-    private AInteractable lastObjectThatInteract;
+    private ABaseCounter lastCounterThatInteract;
     private SelectedCounterVisual selectedCounterVisual;
     private bool isInteractableObjectNear;
 
@@ -42,31 +42,30 @@ public class Player : AInteractable
 
     private void HandleInteractions() {
 
-        AInteractable currentObject = GetObjectThatCollide();
+        ABaseCounter currentObject = GetObjectThatCollide();
 
-        lastObjectThatInteract = currentObject ?? lastObjectThatInteract;
+        lastCounterThatInteract = currentObject ?? lastCounterThatInteract;
 
         bool shouldPerformVisual = gameInput.IsInteractionPerformed();
         bool isPlayerInteracting = gameInput.IsInteractionPressed();
 
         if (shouldPerformVisual && !CheckObject.isNullOrEmpty(currentObject) )
         {
-            //lastObjectThatInteract.Interact(this);
-            selectedCounterVisual.setCounter(lastObjectThatInteract);
+            selectedCounterVisual.setCounter(lastCounterThatInteract);
             
         }
         selectedCounterVisual.setShouldInteract(isInteractableObjectNear);
 
         if (isPlayerInteracting && !CheckObject.isNullOrEmpty(currentObject))
         {
-            lastObjectThatInteract.Interact(this);
+            lastCounterThatInteract.Interact(this);
 
         }
 
     }
-    private AInteractable GetObjectThatCollide()
+    private ABaseCounter GetObjectThatCollide()
     {
-        AInteractable interactObject = null;
+        ABaseCounter interactObject = null;
 
         isInteractableObjectNear = Physics.Raycast(transform.position, transform.forward, out RaycastHit raycastHit, INTERACT_DISTANCE, clearCounterLayerMask);
 

@@ -2,36 +2,23 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ClearCounter :  AInteractable
+public class ClearCounter : ABaseCounter
 {
-
-    [SerializeField] private KitchenObjectSO kitchenObjectSO;
-    private KitchenObject kitchenObject;
-
-    public void Start()
-    {
-        SetPickPoint();
-    }
 
     public override void CancelInteract()
     {
-        VisualBehaviour.CancelVisualInteraction(this);
+        VisualCounterBehaviour.CancelVisualInteraction(this);
     }
 
-    public override void Interact(AInteractable interactObject) {
+    public override void Interact(AInteractable player) {
 
-        if ( kitchenObject == null && !CheckObject.isNullOrEmpty(kitchenObjectSO.prefab) ) {
-
-            kitchenObject = Instantiate(kitchenObjectSO.prefab, pickPoint).GetComponent<KitchenObject>();
-            kitchenObject.transform.localPosition = Vector3.zero;
-            
+        if ( CheckObject.isNullOrEmpty(kitchenObject) && player.hasKitchenObject() ) 
+        {    
+            KitchenObject.ChangeParent( player.GetKitchenObject() , player, this );     
         }
-        else if ( kitchenObject != null)
+        else if (!CheckObject.isNullOrEmpty(kitchenObject) && !player.hasKitchenObject())
         {
-            
-            kitchenObject.transform.SetParent(interactObject.GetPickPoint(), false);
-            kitchenObject.transform.localPosition = Vector3.zero;
-
+            KitchenObject.ChangeParent(this.GetKitchenObject(), this, player);
         }
 
 

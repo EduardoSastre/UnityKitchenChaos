@@ -5,7 +5,7 @@ using UnityEngine.EventSystems;
 
 public class SelectedCounterVisual : AVisualObserver
 {
-    private AInteractable counter;
+    private ABaseCounter counter;
     private bool shouldInteract;
 
     private void Start()
@@ -14,15 +14,15 @@ public class SelectedCounterVisual : AVisualObserver
     }
 
     public void Show() {
-        VisualBehaviour.PerformVisualInteraction(counter);
+        VisualCounterBehaviour.PerformVisualInteraction(counter);
     }
 
     public void Hide()
     {
-        VisualBehaviour.CancelVisualInteraction(counter);
+        VisualCounterBehaviour.CancelVisualInteraction(counter);
     }
 
-    public void setCounter( AInteractable counter ) { 
+    public void setCounter( ABaseCounter counter ) { 
         this.counter = counter;
     }
 

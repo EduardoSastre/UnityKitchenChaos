@@ -28,13 +28,15 @@ public class GameInput : AVisualSubject
             notifyObservers(IsInteractionPerformed());
     }
 
-    public bool IsInteractionPerformed() { 
+    public bool IsInteractionPerformed() {
         return inputActions.Player.Interact.IsPressed();
     }
 
     public bool IsInteractionPressed()
     {
-        return inputActions.Player.Interact.triggered;
+        return inputActions.Player.Interact.WasPressedThisFrame();
+
+        
     }
 
     public Vector2 GetMovementVectorNormalized() {

@@ -14,11 +14,22 @@ public class KitchenObject : MonoBehaviour
         return parentObject;
     }
 
-    /*public void setParent( AInteractable interactableObject ) {
-        this.parentObject = interactableObject;
+    public static KitchenObject Create( GameObject prefab, Transform place ) {
 
-        Debug.Log(interactableObject.name);
-        this.transform.parent = interactableObject.GetPickPoint();
-    }*/
+        KitchenObject kitchenObject = Instantiate(prefab, place).GetComponent<KitchenObject>();
+        kitchenObject.transform.localPosition = Vector3.zero;
+
+        return kitchenObject;
+    }
+
+    public static void ChangeParent( KitchenObject kitchenObject, AInteractable originalParent, AInteractable newParent )
+    {
+
+        kitchenObject.transform.SetParent(newParent.GetPickPoint(), false);
+        kitchenObject.transform.localPosition = Vector3.zero;
+        
+        newParent.SetKitchenObject(kitchenObject);
+        originalParent.clearKitchenObject();
+    }
 
 }

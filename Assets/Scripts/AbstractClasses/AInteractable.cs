@@ -5,6 +5,7 @@ using UnityEngine;
 public abstract class AInteractable: MonoBehaviour
 {
     protected Transform pickPoint;
+    protected KitchenObject kitchenObject;
 
     protected void SetPickPoint()
     {
@@ -15,11 +16,24 @@ public abstract class AInteractable: MonoBehaviour
 
     public abstract void CancelInteract();
 
-    public GameObject GetVisualObject() { 
-        return this.transform.GetChild(0).GetChild(0).gameObject;
-    }
-
     public Transform GetPickPoint() { 
         return pickPoint;
+    }
+
+    public void SetKitchenObject( KitchenObject kitchenObject ) { 
+        this.kitchenObject = kitchenObject;
+    }
+
+    public KitchenObject GetKitchenObject()
+    {
+        return kitchenObject;
+    }
+
+    public void clearKitchenObject() {
+        this.kitchenObject = null;
+    }
+
+    public bool hasKitchenObject() {
+        return kitchenObject != null;
     }
 }
