@@ -14,11 +14,11 @@ public class ClearCounter : ABaseCounter
 
         if ( CheckObject.isNullOrEmpty(kitchenObject) && player.hasKitchenObject() ) 
         {    
-            KitchenObject.ChangeParent( player.GetKitchenObject() , player, this );     
+            KitchenObject.ChangeParent( player, this );     
         }
         else if (!CheckObject.isNullOrEmpty(kitchenObject) && !player.hasKitchenObject())
         {
-            KitchenObject.ChangeParent(this.GetKitchenObject(), this, player);
+            KitchenObject.ChangeParent( this, player);
         }
 
 

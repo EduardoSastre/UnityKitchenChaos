@@ -1,26 +1,45 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class ContainerCounter : ABaseCounter
 {
+
+    public event EventHandler OnPlayerGrabbedObject;
+
     public override void CancelInteract()
     {
-        VisualCounterBehaviour.CancelVisualInteraction(this);
+        //VisualCounterBehaviour.CancelVisualInteraction(this);
     }
 
     public override void Interact(AInteractable player)
     {
+        bool hasCounterObjectAbove = kitchenObject != null ? true : false;
 
-        if (kitchenObject == null && !CheckObject.isNullOrEmpty(kitchenObjectSO.prefab))
+        if ( !hasCounterObjectAbove && !CheckObject.isNullOrEmpty(kitchenObjectSO.prefab))
         {
-            kitchenObject = KitchenObject.Create(kitchenObjectSO.prefab, pickPoint);
+            if (!hasGrabbedObject(player))
+            {
+                KitchenObject.Create(kitchenObjectSO.prefab, player);
+                OnPlayerGrabbedObject?.Invoke(this, EventArgs.Empty);
+            }
+            else {
+                KitchenObject.ChangeParent( player, this);
+            }         
         }
-        else if (kitchenObject != null)
+        else if (hasCounterObjectAbove)
         {
-            KitchenObject.ChangeParent( kitchenObject, this, player );
+            if (!hasGrabbedObject(player))
+            {
+                KitchenObject.ChangeParent(this, player);
+            }
         }
 
 
+    }
+
+    private bool hasGrabbedObject(AInteractable player) { 
+        return CheckObject.isNullOrEmpty(player.GetKitchenObject()) ? false : true;
     }
 }
