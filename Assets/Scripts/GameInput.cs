@@ -5,9 +5,10 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 
-public class GameInput : AVisualSubject
+public class GameInput : MonoBehaviour
 {
     public event EventHandler OnInteractAction;
+    public event EventHandler OnCancelAction;
 
     private static GameInput gameInput = null;
 
@@ -21,22 +22,20 @@ public class GameInput : AVisualSubject
         inputActions = new PlayerInputActions();
         gameInput = this; //Unity by default creates an instance of this object when its loaded
         inputActions.Player.Enable();
+        inputActions.Player.Interact.performed += Interact_performed;
+        inputActions.Player.Interact.canceled += Interact_canceled;
+
     }
 
-    private void Update()
+ 
+    private void Interact_performed(InputAction.CallbackContext obj)
     {
-            notifyObservers(IsInteractionPerformed());
+        OnInteractAction?.Invoke( this, EventArgs.Empty );
     }
 
-    public bool IsInteractionPerformed() {
-        return inputActions.Player.Interact.IsPressed();
-    }
-
-    public bool IsInteractionPressed()
+    private void Interact_canceled(InputAction.CallbackContext obj)
     {
-        return inputActions.Player.Interact.WasPressedThisFrame();
-
-        
+        OnCancelAction?.Invoke(this, EventArgs.Empty);
     }
 
     public Vector2 GetMovementVectorNormalized() {
@@ -45,30 +44,9 @@ public class GameInput : AVisualSubject
         return inputVector.normalized;
     }
 
-    public PlayerInputActions getInputAction() { 
-        return inputActions;
-    }
-
-    public static GameInput getInstance() {
+    public static GameInput GetInstance() {
 
         return gameInput;
 
-    }
-
-    public override void addObserver(AVisualObserver observer)
-    {
-        this.observers.Add(observer);
-    }
-
-    public override void removeObserver(AVisualObserver observer)
-    {
-        this.observers.Remove(observer);
-    }
-
-    public override void notifyObservers( bool isInteractionPerformed )
-    {
-        foreach ( AVisualObserver observer in this.observers ) {
-            observer.Actualize(isInteractionPerformed);
-        }
     }
 }

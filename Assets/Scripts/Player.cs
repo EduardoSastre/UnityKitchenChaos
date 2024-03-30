@@ -7,6 +7,16 @@ using UnityEngine.Windows;
 
 public class Player : AInteractable
 {
+
+    public event EventHandler<OnCounterInteractionEventsArgs> OnCounterInteraction;
+
+    public class OnCounterInteractionEventsArgs : EventArgs { 
+        public ABaseCounter counter;
+        public Player player;
+    }
+
+    private static Player player;
+
     [SerializeField] private float moveSpeed = 7f;
     [SerializeField] private GameInput gameInput;
     [SerializeField] private LayerMask clearCounterLayerMask;
@@ -20,20 +30,28 @@ public class Player : AInteractable
 
     private Vector3 moveDirection;
     private ABaseCounter lastCounterThatInteract;
-    private SelectedCounterVisual selectedCounterVisual;
-    private bool isInteractableObjectNear;
+
+    private void Awake()
+    {
+        player = this;
+    }
 
     private void Start()
     {
-        gameInput = GameInput.getInstance();
-        selectedCounterVisual = gameObject.AddComponent<SelectedCounterVisual>();
+        gameInput = GameInput.GetInstance();
         SetPickPoint();
+        gameInput.OnInteractAction += GameInput_OnInteractAction;
+    }
+
+    private void GameInput_OnInteractAction(object sender, EventArgs e)
+    {
+        HandleInteractions();
     }
 
     private void Update()
     {
         HandleMovement();
-        HandleInteractions();
+        lastCounterThatInteract = GetObjectThatCollide();
     }
 
     public bool IsWalking() { 
@@ -44,30 +62,14 @@ public class Player : AInteractable
 
         ABaseCounter currentObject = GetObjectThatCollide();
 
-        lastCounterThatInteract = currentObject ?? lastCounterThatInteract;
-
-        bool shouldPerformVisual = gameInput.IsInteractionPerformed();
-        bool isPlayerInteracting = gameInput.IsInteractionPressed();
-
-        if (shouldPerformVisual && !CheckObject.isNullOrEmpty(currentObject) )
-        {
-            selectedCounterVisual.setCounter(lastCounterThatInteract);
-            
-        }
-        selectedCounterVisual.setShouldInteract(isInteractableObjectNear);
-
-        if (isPlayerInteracting && !CheckObject.isNullOrEmpty(currentObject))
-        {
-            lastCounterThatInteract.Interact(this);
-
-        }
+        OnCounterInteraction?.Invoke(this, new OnCounterInteractionEventsArgs { counter = currentObject, player = this });
 
     }
-    private ABaseCounter GetObjectThatCollide()
+    public ABaseCounter GetObjectThatCollide()
     {
         ABaseCounter interactObject = null;
 
-        isInteractableObjectNear = Physics.Raycast(transform.position, transform.forward, out RaycastHit raycastHit, INTERACT_DISTANCE, clearCounterLayerMask);
+        bool isInteractableObjectNear = Physics.Raycast(transform.position, transform.forward, out RaycastHit raycastHit, INTERACT_DISTANCE, clearCounterLayerMask);
 
         if (isInteractableObjectNear) {
             raycastHit.collider.gameObject.TryGetComponent(out interactObject);
@@ -118,13 +120,7 @@ public class Player : AInteractable
 
     }
 
-    public override void Interact(AInteractable interactableObject)
-    {
-        
-    }
-
-    public override void CancelInteract()
-    {
-        throw new NotImplementedException();
+    public static Player GetInstance() {
+        return player;
     }
 }

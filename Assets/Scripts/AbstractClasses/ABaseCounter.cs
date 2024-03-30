@@ -6,31 +6,19 @@ public abstract class ABaseCounter : AInteractable
 {
 
     [SerializeField] protected KitchenObjectSO kitchenObjectSO;
-    [SerializeField] protected GameObject[] visualObjects;
+    [SerializeField] protected SelectedCounterVisual selectedCounterVisual;
 
     public void Start()
     {
         SetPickPoint();
-        visualObjects = new GameObject[this.transform.Find("Selected").childCount];
+        Player.GetInstance().OnCounterInteraction += ABaseCounter_OnCounterInteraction;
     }
 
-    public GameObject[] GetVisualObjects()
+    private void ABaseCounter_OnCounterInteraction(object sender, Player.OnCounterInteractionEventsArgs interactedObjects)
     {
-        // Get the transform of the parent GameObject
-        Transform parentTransform = this.transform.Find("Selected");
-
-        // Iterate through all children and save them
-        for (int i = 0; i < parentTransform.childCount; i++)
-        {
-            // Get the child at index 'i'
-            GameObject childTransform = parentTransform.GetChild(i).gameObject;
-            
-            visualObjects[i] = childTransform;
-
-        }
-
-        return visualObjects;
-
+        Interact(interactedObjects.counter, interactedObjects.player);
     }
+
+    public abstract void Interact( ABaseCounter counterInteracted, Player player );
 
 }

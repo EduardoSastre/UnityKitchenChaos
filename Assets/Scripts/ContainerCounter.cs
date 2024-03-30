@@ -8,38 +8,42 @@ public class ContainerCounter : ABaseCounter
 
     public event EventHandler OnPlayerGrabbedObject;
 
-    public override void CancelInteract()
-    {
-        //VisualCounterBehaviour.CancelVisualInteraction(this);
-    }
-
-    public override void Interact(AInteractable player)
+    public override void Interact(ABaseCounter counterInteracted, Player player)
     {
         bool hasCounterObjectAbove = kitchenObject != null ? true : false;
+        bool thisCounterInteract = counterInteracted == this ? true : false;
+        bool shouldInteract = !hasCounterObjectAbove && thisCounterInteract;
 
-        if ( !hasCounterObjectAbove && !CheckObject.isNullOrEmpty(kitchenObjectSO.prefab))
+        if (thisCounterInteract)
         {
-            if (!hasGrabbedObject(player))
+            if (hasCounterObjectAbove) 
             {
-                KitchenObject.Create(kitchenObjectSO.prefab, player);
-                OnPlayerGrabbedObject?.Invoke(this, EventArgs.Empty);
+
+                if (!hasGrabbedObject(player))
+                {
+                    KitchenObject.ChangeParent(this, player);
+                }
+           
             }
             else {
-                KitchenObject.ChangeParent( player, this);
-            }         
-        }
-        else if (hasCounterObjectAbove)
-        {
-            if (!hasGrabbedObject(player))
-            {
-                KitchenObject.ChangeParent(this, player);
-            }
-        }
 
+
+                if (!hasGrabbedObject(player))
+                {
+                    KitchenObject.Create(kitchenObjectSO.prefab, player);
+                    OnPlayerGrabbedObject?.Invoke(this, EventArgs.Empty);
+                }
+                else {
+                    KitchenObject.ChangeParent(player, this);
+                }
+
+                
+            }     
+        }
 
     }
 
-    private bool hasGrabbedObject(AInteractable player) { 
+    private bool hasGrabbedObject(Player player) { 
         return CheckObject.isNullOrEmpty(player.GetKitchenObject()) ? false : true;
     }
 }

@@ -12,10 +12,6 @@ public abstract class AInteractable: MonoBehaviour
         this.pickPoint = this.transform.Find("PickPoint");
     }
 
-    public abstract void Interact(AInteractable interactableObject);
-
-    public abstract void CancelInteract();
-
     public Transform GetPickPoint() { 
         return pickPoint;
     }
