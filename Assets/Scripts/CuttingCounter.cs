@@ -39,10 +39,8 @@ public class CuttingCounter : ABaseCounter
         }
 
         if (!CheckObject.isNullOrEmpty(kitchenObjectCutted)) {
-            Debug.Log("Old kitchen Object: " + kitchenObject.name );
             KitchenObject.Destroy(kitchenObject.gameObject, this);
             KitchenObject.Create(kitchenObjectCutted.prefab, this);
-            Debug.Log("New kitchen Object: " + kitchenObject.name);
         }
         
     }
