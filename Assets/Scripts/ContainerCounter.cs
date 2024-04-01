@@ -10,13 +10,12 @@ public class ContainerCounter : ABaseCounter
 
     public override void Interact(ABaseCounter counterInteracted, Player player)
     {
-        bool hasCounterObjectAbove = kitchenObject != null ? true : false;
+        bool hasObjectAbove = kitchenObject != null ? true : false;
         bool thisCounterInteract = counterInteracted == this ? true : false;
-        bool shouldInteract = !hasCounterObjectAbove && thisCounterInteract;
 
         if (thisCounterInteract)
         {
-            if (hasCounterObjectAbove) 
+            if (hasObjectAbove) 
             {
 
                 if (!hasGrabbedObject(player))

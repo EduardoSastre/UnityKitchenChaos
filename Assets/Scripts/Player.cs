@@ -23,13 +23,15 @@ public class Player : AInteractable
 
     private bool isWalking;
     private bool canMove;
+    private bool isCounterNear;
 
     private const float PLAYER_RADIUS = 0.7f;
-    private const float INTERACT_DISTANCE = PLAYER_RADIUS*3;
+    private const float INTERACT_DISTANCE = 1.2f;
     private const float PLAYER_HEIGHT = 2f;
 
+    private ABaseCounter counterThatCollide;
+
     private Vector3 moveDirection;
-    private ABaseCounter lastCounterThatInteract;
 
     private void Awake()
     {
@@ -41,6 +43,7 @@ public class Player : AInteractable
         gameInput = GameInput.GetInstance();
         SetPickPoint();
         gameInput.OnInteractAction += GameInput_OnInteractAction;
+        gameInput.OnInteractAlternate += GameInput_OnInteractAlternate;
     }
 
     private void GameInput_OnInteractAction(object sender, EventArgs e)
@@ -48,10 +51,17 @@ public class Player : AInteractable
         HandleInteractions();
     }
 
+    private void GameInput_OnInteractAlternate(object sender, EventArgs e)
+    {
+        if (!CheckObject.isNullOrEmpty(counterThatCollide)) {
+            counterThatCollide.InteractAlternate();
+        }
+    }
+
     private void Update()
     {
         HandleMovement();
-        lastCounterThatInteract = GetObjectThatCollide();
+        CheckCounterCollision();
     }
 
     public bool IsWalking() { 
@@ -60,22 +70,19 @@ public class Player : AInteractable
 
     private void HandleInteractions() {
 
-        ABaseCounter currentObject = GetObjectThatCollide();
-
-        OnCounterInteraction?.Invoke(this, new OnCounterInteractionEventsArgs { counter = currentObject, player = this });
-
+        OnCounterInteraction?.Invoke(this, new OnCounterInteractionEventsArgs { counter = counterThatCollide, player = this });
     }
-    public ABaseCounter GetObjectThatCollide()
+    public void CheckCounterCollision()
     {
-        ABaseCounter interactObject = null;
+        isCounterNear = Physics.Raycast(transform.position, transform.forward, out RaycastHit raycastHit, INTERACT_DISTANCE, clearCounterLayerMask);
 
-        bool isInteractableObjectNear = Physics.Raycast(transform.position, transform.forward, out RaycastHit raycastHit, INTERACT_DISTANCE, clearCounterLayerMask);
-
-        if (isInteractableObjectNear) {
-            raycastHit.collider.gameObject.TryGetComponent(out interactObject);
+        if (isCounterNear)
+        {
+            raycastHit.collider.gameObject.TryGetComponent(out counterThatCollide);
         }
-        
-        return interactObject;
+        else {
+            counterThatCollide = null;
+        }  
     }
 
     private void HandleMovement() {
@@ -90,12 +97,11 @@ public class Player : AInteractable
 
         if (!canMove)
         {
-
             Vector3 moveDirectionX = new Vector3(inputVector.x, 0, 0).normalized;
             Vector3 moveDirectionZ = new Vector3(0, 0, inputVector.y).normalized;
 
-            bool canMoveX = !Physics.CapsuleCast(transform.position, transform.position + Vector3.up * PLAYER_HEIGHT, PLAYER_RADIUS, moveDirectionX, moveDistance);
-            bool canMoveY = !Physics.CapsuleCast(transform.position, transform.position + Vector3.up * PLAYER_HEIGHT, PLAYER_RADIUS, moveDirectionZ, moveDistance);
+            bool canMoveX = moveDirectionX.x != 0 && !Physics.CapsuleCast(transform.position, transform.position + Vector3.up * PLAYER_HEIGHT, PLAYER_RADIUS, moveDirectionX, moveDistance);
+            bool canMoveY = moveDirectionX.z != 0 && !Physics.CapsuleCast(transform.position, transform.position + Vector3.up * PLAYER_HEIGHT, PLAYER_RADIUS, moveDirectionZ, moveDistance);
             canMove = canMoveX || canMoveY;
 
             if (canMoveX)
@@ -118,6 +124,10 @@ public class Player : AInteractable
         float rotateSpeed = 10f;
         transform.forward = Vector3.Slerp(transform.forward, moveDirection, Time.deltaTime * rotateSpeed); //To get Smoother movement
 
+    }
+
+    public bool IsCounterNear() {
+        return isCounterNear;
     }
 
     public static Player GetInstance() {

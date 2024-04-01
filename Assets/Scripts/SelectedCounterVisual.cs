@@ -30,7 +30,7 @@ public class SelectedCounterVisual : MonoBehaviour
     {
         ABaseCounter parentCounter = this.transform.parent.GetComponent<ABaseCounter>();
 
-        if (InteractedCounter.counter == parentCounter)
+        if (InteractedCounter.counter == parentCounter && InteractedCounter.player.IsCounterNear() )
         {
             PerformVisualInteraction();
         }

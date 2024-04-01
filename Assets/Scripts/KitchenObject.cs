@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class KitchenObject : MonoBehaviour 
 {
-    [SerializeField] KitchenObjectSO kitchenObjectSO;
+    [SerializeField] private KitchenObjectSO kitchenObjectSO;
 
     private AInteractable parentObject;
 
@@ -14,12 +14,18 @@ public class KitchenObject : MonoBehaviour
         return parentObject;
     }
 
-    public static void Create( GameObject prefab, AInteractable parent ) {
+    public static void Create( GameObject kitchenObjectPrefab, AInteractable parent ) {
 
-        KitchenObject kitchenObject = Instantiate(prefab, parent.GetPickPoint() ).GetComponent<KitchenObject>();
+        KitchenObject kitchenObject = Instantiate(kitchenObjectPrefab, parent.GetPickPoint() ).GetComponent<KitchenObject>();
         kitchenObject.transform.localPosition = Vector3.zero;
 
         parent.SetKitchenObject( kitchenObject );
+    }
+
+    public static void Destroy(GameObject kitchenObjectPrefab, AInteractable parent)
+    {
+        parent.clearKitchenObject();
+        Destroy(kitchenObjectPrefab);
     }
 
     public static void ChangeParent( AInteractable originalParent, AInteractable newParent )

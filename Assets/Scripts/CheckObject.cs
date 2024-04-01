@@ -23,4 +23,11 @@ public class CheckObject
         return gameObject == null || gameObject.name == null || gameObject.name == "";
 
     }
+
+    public static bool isNullOrEmpty(KitchenObjectSO gameObject)
+    {
+
+        return gameObject == null || gameObject.name == null || gameObject.name == "";
+
+    }
 }

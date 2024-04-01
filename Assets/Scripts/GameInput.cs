@@ -9,6 +9,7 @@ public class GameInput : MonoBehaviour
 {
     public event EventHandler OnInteractAction;
     public event EventHandler OnCancelAction;
+    public event EventHandler OnInteractAlternate;
 
     private static GameInput gameInput = null;
 
@@ -24,10 +25,10 @@ public class GameInput : MonoBehaviour
         inputActions.Player.Enable();
         inputActions.Player.Interact.performed += Interact_performed;
         inputActions.Player.Interact.canceled += Interact_canceled;
+        inputActions.Player.InteractAlternate.performed += InteractAlternate_performed;
 
     }
 
- 
     private void Interact_performed(InputAction.CallbackContext obj)
     {
         OnInteractAction?.Invoke( this, EventArgs.Empty );
@@ -36,6 +37,11 @@ public class GameInput : MonoBehaviour
     private void Interact_canceled(InputAction.CallbackContext obj)
     {
         OnCancelAction?.Invoke(this, EventArgs.Empty);
+    }
+
+    private void InteractAlternate_performed(InputAction.CallbackContext obj)
+    {
+        OnInteractAlternate?.Invoke(this, EventArgs.Empty);
     }
 
     public Vector2 GetMovementVectorNormalized() {

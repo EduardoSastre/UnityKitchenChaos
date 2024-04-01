@@ -6,7 +6,6 @@ public abstract class ABaseCounter : AInteractable
 {
 
     [SerializeField] protected KitchenObjectSO kitchenObjectSO;
-    [SerializeField] protected SelectedCounterVisual selectedCounterVisual;
 
     public void Start()
     {
@@ -20,5 +19,9 @@ public abstract class ABaseCounter : AInteractable
     }
 
     public abstract void Interact( ABaseCounter counterInteracted, Player player );
+
+    public virtual void InteractAlternate() { 
+        //TODO: FUTURE IMPLEMENTATION
+    }
 
 }
