@@ -1,10 +1,18 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class CuttingCounter : ABaseCounter
 {
-    [SerializeField] CuttingRecipesSO[] cuttingRecipesArraySO;
+
+    public event EventHandler<OnProgressChangedEventArgs> OnProgressChanged;
+    public class OnProgressChangedEventArgs : EventArgs {
+        public float progressNormalized;
+    }
+
+    [SerializeField] private CuttingRecipesSO[] cuttingRecipesArraySO;
+    private int cuttingProgress;
 
     public override void Interact(ABaseCounter counterInteracted, Player player)
     {
@@ -12,6 +20,7 @@ public class CuttingCounter : ABaseCounter
         {
             if (CheckObject.isNullOrEmpty(kitchenObject) && player.hasKitchenObject())
             {
+                cuttingProgress = 0;
                 KitchenObject.ChangeParent(player, this);
             }
             else if (!CheckObject.isNullOrEmpty(kitchenObject) && !player.hasKitchenObject())
@@ -24,6 +33,7 @@ public class CuttingCounter : ABaseCounter
     public override void InteractAlternate() {
         
         if (!CheckObject.isNullOrEmpty(kitchenObject)){
+            cuttingProgress++;
             cutKitchenObject(kitchenObject);
         }
     }
@@ -34,7 +44,16 @@ public class CuttingCounter : ABaseCounter
 
         foreach (CuttingRecipesSO cuttingRecipesSO in cuttingRecipesArraySO) {
             if (cuttingRecipesSO.inputObjectSO == kitchenObject.GetKitchenObjectSO()) {
-                kitchenObjectCutted = cuttingRecipesSO.outputObjectSO;
+
+                OnProgressChanged?.Invoke(this, new OnProgressChangedEventArgs
+                {
+                    progressNormalized = (float)cuttingProgress / cuttingRecipesSO.cuttingMax
+                });
+
+                if (cuttingProgress >= cuttingRecipesSO.cuttingMax)
+                {
+                    kitchenObjectCutted = cuttingRecipesSO.outputObjectSO;
+                }
             }
         }
 
@@ -44,4 +63,5 @@ public class CuttingCounter : ABaseCounter
         }
         
     }
+
 }

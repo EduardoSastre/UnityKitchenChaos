@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ContainerCounterVisual : MonoBehaviour
+public class CuttingCounterVisual_ : MonoBehaviour
 {
     private Animator animator;
     private const string OPEN_CLOSE = "OpenClose";
