@@ -7,15 +7,24 @@ using static CuttingCounter;
 public class StoveCounter : ABaseCounter
 {
     /// <summary>
-    /// ////////////////// MIN 5:35:39
+    /// ////////////////// MIN 5:47:00
     /// </summary>
+    /// 
+
+    //TODO: Implement visual behavour in stove counter visual
     [SerializeField] FryingRecipeSO[] fryingRecipeSOArray;
     private float timer = 0;
     private State currentState;
     private FryingRecipeSO currentFryingRecipeSO;
     private bool shouldFry = false;
 
-    private enum State { 
+    public event EventHandler<OnStateChangedEventArgs> OnStateChanged;
+    public class OnStateChangedEventArgs : EventArgs
+    {
+        public State currentState;
+    }
+
+    public enum State { 
         Idle,
         Frying,
         Fried,
@@ -37,16 +46,21 @@ public class StoveCounter : ABaseCounter
         Debug.Log("");
     }
 
+    public bool IsFrying() {
+        return shouldFry;
+    }
+
     public override void Interact(ABaseCounter counterInteracted, Player player)
     {
         if (counterInteracted == this)
         {
 
-            if (CheckObject.isNullOrEmpty(kitchenObject) && player.hasKitchenObject() && hasKitchenObjectRecipeOutput( player.GetKitchenObject() ))
+            if (CheckObject.isNullOrEmpty(kitchenObjectOnPickPoint) && player.hasKitchenObject() && hasKitchenObjectRecipeOutput( player.GetKitchenObject() ))
             {
                 KitchenObject.ChangeParent(player, this);
+                ResetStove();
             }
-            else if (!CheckObject.isNullOrEmpty(kitchenObject) && !player.hasKitchenObject())
+            else if (!CheckObject.isNullOrEmpty(kitchenObjectOnPickPoint) && !player.hasKitchenObject())
             {
                 KitchenObject.ChangeParent(this, player);
             }
@@ -56,10 +70,6 @@ public class StoveCounter : ABaseCounter
     private Boolean hasKitchenObjectRecipeOutput( KitchenObject kitchenObject ) {
 
         foreach (FryingRecipeSO fryingRecipeSO in fryingRecipeSOArray) {
-
-            Debug.Log(kitchenObject.GetKitchenObjectSO().name);
-                Debug.Log(fryingRecipeSO.inputObjectSO.name);
-            Debug.Log("");
 
             if (kitchenObject.GetKitchenObjectSO() == fryingRecipeSO.inputObjectSO) {
                 currentFryingRecipeSO = fryingRecipeSO;
@@ -73,21 +83,39 @@ public class StoveCounter : ABaseCounter
 
     public override void InteractAlternate()
     {
-        if (!CheckObject.isNullOrEmpty(kitchenObject))
+        if (!CheckObject.isNullOrEmpty(kitchenObjectOnPickPoint))
         {
             shouldFry = shouldFry == true ? false : true;
+            currentState = currentState == State.Idle ? State.Frying : State.Idle; 
         }
     }
 
-    private void ChangeToState( State state ) {
-        currentState = state;
+    private void ResetStove() { 
+        ClearTimer();
+        shouldFry = false;
+        ChangeToState(State.Idle);
     }
 
     private void ClearTimer() {
         timer = 0;
     }
 
+    private void ChangeToState(State state)
+    {
+        currentState = state;
+
+        OnStateChanged?.Invoke(this, new OnStateChangedEventArgs
+        {
+            currentState = this.currentState
+        });
+    }
+
     private void StartProcess() {
+
+        if ( CheckObject.isNullOrEmpty(kitchenObjectOnPickPoint) || !hasKitchenObjectRecipeOutput(kitchenObjectOnPickPoint)) {
+            return;
+        }
+
         timer += Time.deltaTime;
 
         if (timer >= currentFryingRecipeSO.fryingTimerMax ) {
@@ -100,26 +128,24 @@ public class StoveCounter : ABaseCounter
     private void UpdateState() {
         switch (currentState)
         {
-            case State.Idle:
-                if (hasKitchenObjectRecipeOutput(kitchenObject))
-                {
-                    ChangeToState(State.Frying);
-                }               
+            case State.Idle:          
                 break;
             case State.Frying:
-                if (hasKitchenObjectRecipeOutput(kitchenObject)) {
-                    ChangeInputForOutput(currentFryingRecipeSO);
-                    ChangeToState(State.Fried);
-                }                
+                ChangeToState(State.Fried);
                 break;
             case State.Fried:
-                if (hasKitchenObjectRecipeOutput(kitchenObject))
+                if (hasKitchenObjectRecipeOutput(kitchenObjectOnPickPoint))
                 {
-                    ChangeInputForOutput(currentFryingRecipeSO);
-                    ChangeToState(State.Burned);
-                }             
+                    ChangeInputForOutput(currentFryingRecipeSO);                   
+                }
+                ChangeToState(State.Burned);
                 break;
             case State.Burned:
+                if (hasKitchenObjectRecipeOutput(kitchenObjectOnPickPoint))
+                {
+                    ChangeInputForOutput(currentFryingRecipeSO);
+                }
+                ResetStove();
                 break;
         }
     }
@@ -138,9 +164,9 @@ public class StoveCounter : ABaseCounter
     private void ChangeInputForOutput(FryingRecipeSO fryingRecipeSO)
     {
 
-        if (!CheckObject.isNullOrEmpty(kitchenObject))
+        if (!CheckObject.isNullOrEmpty(kitchenObjectOnPickPoint))
         {
-            KitchenObject.Destroy(kitchenObject.gameObject, this);
+            KitchenObject.Destroy(kitchenObjectOnPickPoint.gameObject, this);
             KitchenObject.Create(fryingRecipeSO.outputObjectSO.prefab, this);
         }
 

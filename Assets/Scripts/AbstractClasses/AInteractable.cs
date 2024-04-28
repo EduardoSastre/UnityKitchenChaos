@@ -5,7 +5,7 @@ using UnityEngine;
 public abstract class AInteractable: MonoBehaviour
 {
     protected Transform pickPoint;
-    protected KitchenObject kitchenObject;
+    protected KitchenObject kitchenObjectOnPickPoint;
 
     protected void SetPickPoint()
     {
@@ -17,19 +17,19 @@ public abstract class AInteractable: MonoBehaviour
     }
 
     public void SetKitchenObject( KitchenObject kitchenObject ) { 
-        this.kitchenObject = kitchenObject;
+        this.kitchenObjectOnPickPoint = kitchenObject;
     }
 
     public KitchenObject GetKitchenObject()
     {
-        return kitchenObject;
+        return kitchenObjectOnPickPoint;
     }
 
     public void clearKitchenObject() {
-        this.kitchenObject = null;
+        this.kitchenObjectOnPickPoint = null;
     }
 
     public bool hasKitchenObject() {
-        return kitchenObject != null;
+        return kitchenObjectOnPickPoint != null;
     }
 }

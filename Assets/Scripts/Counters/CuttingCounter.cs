@@ -18,12 +18,12 @@ public class CuttingCounter : ABaseCounter
     {
         if (counterInteracted == this)
         {
-            if (CheckObject.isNullOrEmpty(kitchenObject) && player.hasKitchenObject())
+            if (CheckObject.isNullOrEmpty(kitchenObjectOnPickPoint) && player.hasKitchenObject())
             {
                 cuttingProgress = 0;
                 KitchenObject.ChangeParent(player, this);
             }
-            else if (!CheckObject.isNullOrEmpty(kitchenObject) && !player.hasKitchenObject())
+            else if (!CheckObject.isNullOrEmpty(kitchenObjectOnPickPoint) && !player.hasKitchenObject())
             {
                 KitchenObject.ChangeParent(this, player);
             }
@@ -32,9 +32,9 @@ public class CuttingCounter : ABaseCounter
 
     public override void InteractAlternate() {
         
-        if (!CheckObject.isNullOrEmpty(kitchenObject)){
+        if (!CheckObject.isNullOrEmpty(kitchenObjectOnPickPoint)){
             cuttingProgress++;
-            cutKitchenObject(kitchenObject);
+            cutKitchenObject(kitchenObjectOnPickPoint);
         }
     }
 

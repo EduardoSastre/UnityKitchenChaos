@@ -10,7 +10,7 @@ public class ContainerCounter : ABaseCounter
 
     public override void Interact(ABaseCounter counterInteracted, Player player)
     {
-        bool hasObjectAbove = kitchenObject != null ? true : false;
+        bool hasObjectAbove = kitchenObjectOnPickPoint != null ? true : false;
         bool thisCounterInteract = counterInteracted == this ? true : false;
 
         if (thisCounterInteract)
