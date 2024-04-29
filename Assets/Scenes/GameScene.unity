@@ -187,7 +187,9 @@ PrefabInstance:
       value: StoveCounter
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 2428623637340999736, guid: 07fbbf221f2906e47900a4c4e36e97d2, type: 3}
+    - {fileID: 7636770095064745905, guid: 07fbbf221f2906e47900a4c4e36e97d2, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 07fbbf221f2906e47900a4c4e36e97d2, type: 3}

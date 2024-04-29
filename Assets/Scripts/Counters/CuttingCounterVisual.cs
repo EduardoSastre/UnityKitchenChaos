@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -19,9 +20,9 @@ public class CuttingCounterVisual : MonoBehaviour
         cuttingCounter.OnProgressChanged += CuttingCounter_OnProgressChanged;
     }
 
-    private void CuttingCounter_OnProgressChanged(object sender, CuttingCounter.OnProgressChangedEventArgs e)
+    private void CuttingCounter_OnProgressChanged(object sender, IHasProgress.OnProgressChangedEventArgs e)
     {
-        animator.SetTrigger(CUT);
+        animator.SetTrigger(CUT); ;
     }
 
 }

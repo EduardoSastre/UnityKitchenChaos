@@ -1,10 +1,11 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using static CuttingCounter;
 
-public class StoveCounter : ABaseCounter
+public class StoveCounter : ABaseCounter, IHasProgress
 {
     /// <summary>
     /// ////////////////// MIN 5:47:00
@@ -19,6 +20,8 @@ public class StoveCounter : ABaseCounter
     private bool shouldFry = false;
 
     public event EventHandler<OnStateChangedEventArgs> OnStateChanged;
+    public event EventHandler<IHasProgress.OnProgressChangedEventArgs> OnProgressChanged;
+
     public class OnStateChangedEventArgs : EventArgs
     {
         public State currentState;
@@ -38,12 +41,9 @@ public class StoveCounter : ABaseCounter
 
     private void Update()
     {
-        if (shouldFry) {
+        if ( currentState != State.Idle ) {
             StartProcess();
         }
-        Debug.Log(shouldFry);
-        Debug.Log(currentState);
-        Debug.Log("");
     }
 
     public bool IsFrying() {
@@ -63,6 +63,7 @@ public class StoveCounter : ABaseCounter
             else if (!CheckObject.isNullOrEmpty(kitchenObjectOnPickPoint) && !player.hasKitchenObject())
             {
                 KitchenObject.ChangeParent(this, player);
+                ResetStove();
             }
         }
     }
@@ -81,12 +82,15 @@ public class StoveCounter : ABaseCounter
         return false;
     }
 
-    public override void InteractAlternate()
-    {
-        if (!CheckObject.isNullOrEmpty(kitchenObjectOnPickPoint))
-        {
-            shouldFry = shouldFry == true ? false : true;
-            currentState = currentState == State.Idle ? State.Frying : State.Idle; 
+    public override void InteractAlternate() {
+
+        if (!CheckObject.isNullOrEmpty(kitchenObjectOnPickPoint)) {
+
+            if (currentState == State.Idle) {
+                ChangeToState(State.Frying);
+            } else {
+                ChangeToState(State.Idle);
+            }
         }
     }
 
@@ -112,39 +116,42 @@ public class StoveCounter : ABaseCounter
 
     private void StartProcess() {
 
-        if ( CheckObject.isNullOrEmpty(kitchenObjectOnPickPoint) || !hasKitchenObjectRecipeOutput(kitchenObjectOnPickPoint)) {
-            return;
-        }
+        if ( !CheckObject.isNullOrEmpty(kitchenObjectOnPickPoint) && hasKitchenObjectRecipeOutput(kitchenObjectOnPickPoint)) {
 
-        timer += Time.deltaTime;
+            timer += Time.deltaTime;
 
-        if (timer >= currentFryingRecipeSO.fryingTimerMax ) {
+            OnProgressChanged?.Invoke(this, new IHasProgress.OnProgressChangedEventArgs
+            {
+                progressNormalized = timer / currentFryingRecipeSO.fryingTimerMax
+            });
 
-            UpdateState();
-            ClearTimer();
-        }
+            if (timer >= currentFryingRecipeSO.fryingTimerMax)
+            {
+                UpdateState();
+                ClearTimer();
+            }
+        }   
     }
 
     private void UpdateState() {
-        switch (currentState)
-        {
-            case State.Idle:          
-                break;
+
+        switch (currentState) {
+
             case State.Frying:
+                if (hasKitchenObjectRecipeOutput(kitchenObjectOnPickPoint))
+                {
+                    ChangeInputForOutput(currentFryingRecipeSO);
+                }
                 ChangeToState(State.Fried);
                 break;
             case State.Fried:
                 if (hasKitchenObjectRecipeOutput(kitchenObjectOnPickPoint))
                 {
-                    ChangeInputForOutput(currentFryingRecipeSO);                   
+                    ChangeInputForOutput(currentFryingRecipeSO);
                 }
                 ChangeToState(State.Burned);
                 break;
             case State.Burned:
-                if (hasKitchenObjectRecipeOutput(kitchenObjectOnPickPoint))
-                {
-                    ChangeInputForOutput(currentFryingRecipeSO);
-                }
                 ResetStove();
                 break;
         }

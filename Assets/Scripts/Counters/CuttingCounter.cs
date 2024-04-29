@@ -3,16 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CuttingCounter : ABaseCounter
+public class CuttingCounter : ABaseCounter, IHasProgress
 {
-
-    public event EventHandler<OnProgressChangedEventArgs> OnProgressChanged;
-    public class OnProgressChangedEventArgs : EventArgs {
-        public float progressNormalized;
-    }
 
     [SerializeField] private CuttingRecipesSO[] cuttingRecipesArraySO;
     private int cuttingProgress;
+
+    public event EventHandler<IHasProgress.OnProgressChangedEventArgs> OnProgressChanged;
 
     public override void Interact(ABaseCounter counterInteracted, Player player)
     {
@@ -45,7 +42,7 @@ public class CuttingCounter : ABaseCounter
         foreach (CuttingRecipesSO cuttingRecipesSO in cuttingRecipesArraySO) {
             if (cuttingRecipesSO.inputObjectSO == kitchenObject.GetKitchenObjectSO()) {
 
-                OnProgressChanged?.Invoke(this, new OnProgressChangedEventArgs
+                OnProgressChanged?.Invoke(this, new IHasProgress.OnProgressChangedEventArgs
                 {
                     progressNormalized = (float)cuttingProgress / cuttingRecipesSO.cuttingMax
                 });

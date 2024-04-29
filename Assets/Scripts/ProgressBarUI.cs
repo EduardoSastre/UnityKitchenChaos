@@ -1,30 +1,36 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class ProgressBarUI : MonoBehaviour
 {
-    [SerializeField] private CuttingCounter cuttingCounter;
+    [SerializeField] private GameObject hasProgressBar;
     [SerializeField] private Image barImage;
+
+    private IHasProgress hasProgress;
 
     private void Start()
     {
-        cuttingCounter.OnProgressChanged += CuttingCounter_OnProgressChanged;
+        hasProgress = hasProgressBar.GetComponent<IHasProgress>();
+        hasProgress.OnProgressChanged += HasProggres_OnProgressChanged;
         barImage.fillAmount = 0;
-
         Hide();
     }
 
-    private void CuttingCounter_OnProgressChanged(object sender, CuttingCounter.OnProgressChangedEventArgs progress )
+    private void HasProggres_OnProgressChanged(object sender, IHasProgress.OnProgressChangedEventArgs e)
     {
-        barImage.fillAmount = progress.progressNormalized;
+        barImage.fillAmount = e.progressNormalized;
 
         if (barImage.fillAmount == 0 || barImage.fillAmount == 1)
         {
             Hide();
         }
-        else { 
+        else
+        {
             Show();
         }
     }
