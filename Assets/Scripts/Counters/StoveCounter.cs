@@ -17,7 +17,6 @@ public class StoveCounter : ABaseCounter, IHasProgress
     private float timer = 0;
     private State currentState;
     private FryingRecipeSO currentFryingRecipeSO;
-    private bool shouldFry = false;
 
     public event EventHandler<OnStateChangedEventArgs> OnStateChanged;
     public event EventHandler<IHasProgress.OnProgressChangedEventArgs> OnProgressChanged;
@@ -44,10 +43,6 @@ public class StoveCounter : ABaseCounter, IHasProgress
         if ( currentState != State.Idle ) {
             StartProcess();
         }
-    }
-
-    public bool IsFrying() {
-        return shouldFry;
     }
 
     public override void Interact(ABaseCounter counterInteracted, Player player)
@@ -87,13 +82,18 @@ public class StoveCounter : ABaseCounter, IHasProgress
     }
 
     private void ResetStove() { 
-        ClearTimer();
-        shouldFry = false;
+       
         ChangeToState(State.Idle);
+        ClearTimer();
     }
 
     private void ClearTimer() {
         timer = 0;
+
+        OnProgressChanged?.Invoke(this, new IHasProgress.OnProgressChangedEventArgs
+        {
+            progressNormalized = 0
+        });
     }
 
     private void ChangeToState(State state)
