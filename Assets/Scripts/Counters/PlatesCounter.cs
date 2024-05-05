@@ -10,7 +10,8 @@ public class PlatesCounter : ABaseCounter
     private int spawnMaxCount = 4;
     private int spawnCount;
 
-    public event EventHandler OnSpawnCountChanged;
+    public event EventHandler OnSpawnCountIncrease;
+    public event EventHandler OnSpawnCountDecrease;
 
     private void Awake()
     {
@@ -33,7 +34,7 @@ public class PlatesCounter : ABaseCounter
             {
                 timer = 0;
                 spawnCount++;
-                OnSpawnCountChanged?.Invoke(this, EventArgs.Empty);
+                OnSpawnCountIncrease?.Invoke(this, EventArgs.Empty);
             }
         }   
     }
@@ -48,6 +49,7 @@ public class PlatesCounter : ABaseCounter
             {
                 KitchenObject.Create( kitchenObjectSO.prefab , player );
                 spawnCount--;
+                OnSpawnCountDecrease?.Invoke(this, EventArgs.Empty);
             }
 
         }

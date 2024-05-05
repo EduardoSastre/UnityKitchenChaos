@@ -11,19 +11,36 @@ public class PlatesCounterVisual : MonoBehaviour
 
     private void Start()
     {
-        platesCounter.OnSpawnCountChanged += PlatesCounter_OnSpawnCountChanged;
+        platesCounter.OnSpawnCountIncrease += PlatesCounter_OnSpawnCountIncrease;
+        platesCounter.OnSpawnCountDecrease += PlatesCounter_OnSpawnCountDecrease;
         platesVisualList = new List<GameObject>();
     }
 
-    private void PlatesCounter_OnSpawnCountChanged(object sender, System.EventArgs e)
+    private void PlatesCounter_OnSpawnCountIncrease(object sender, System.EventArgs e)
     {
-        SpawnVisualPlate();
+        CreateVisualPlate();
     }
 
-    private void SpawnVisualPlate() {
+    private void CreateVisualPlate()
+    {
 
         GameObject plateCreated = Instantiate(plateVisual, platesCounter.GetPickPoint(), false);
         platesVisualList.Add(plateCreated);
-        plateCreated.transform.localPosition = new Vector3(0, plateVisualOffsetY * platesVisualList.Count  ,0);
+        plateCreated.transform.localPosition = new Vector3(0, plateVisualOffsetY * platesVisualList.Count, 0);
     }
+
+    private void PlatesCounter_OnSpawnCountDecrease(object sender, System.EventArgs e)
+    {
+        DeleteVisualPlate();
+    }
+
+    private void DeleteVisualPlate()
+    {
+        GameObject topPlateInPile = platesVisualList[platesVisualList.Count - 1];
+        platesVisualList.Remove(topPlateInPile);
+        Destroy(topPlateInPile);
+        
+    }
+
+
 }
