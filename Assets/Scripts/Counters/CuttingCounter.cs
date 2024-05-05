@@ -15,16 +15,13 @@ public class CuttingCounter : ABaseCounter, IHasProgress
     {
         if (counterInteracted == this)
         {
-            if (CheckObject.isNullOrEmpty(kitchenObjectOnPickPoint) && player.hasKitchenObject())
+            if (!this.hasKitchenObject() && player.hasKitchenObject())
             {
                 cuttingProgress = 0;
-                KitchenObject.ChangeParent(player, this);
-            }
-            else if (!CheckObject.isNullOrEmpty(kitchenObjectOnPickPoint) && !player.hasKitchenObject())
-            {
-                KitchenObject.ChangeParent(this, player);
             }
         }
+
+        base.Interact(counterInteracted, player);
     }
 
     public override void InteractAlternate() {

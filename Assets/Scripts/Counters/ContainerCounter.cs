@@ -10,28 +10,18 @@ public class ContainerCounter : ABaseCounter
 
     public override void Interact(ABaseCounter counterInteracted, Player player)
     {
-        bool hasObjectAbove = kitchenObjectOnPickPoint != null ? true : false;
+
+        base.Interact(counterInteracted, player);
 
         if (counterInteracted == this) {
 
-            if (hasObjectAbove) {
-
-                if (!player.hasKitchenObject())
-                {
-                    KitchenObject.ChangeParent(this, player);
-                }         
-            }
-            else {
+            if (!this.hasKitchenObject()) {
 
                 if (!player.hasKitchenObject()) {
 
                     KitchenObject.Create(kitchenObjectSO.prefab, player);
                     OnPlayerGrabbedObject?.Invoke(this, EventArgs.Empty);
-                }
-                else {
-
-                    KitchenObject.ChangeParent(player, this);
-                }      
+                }    
             }     
         }
 

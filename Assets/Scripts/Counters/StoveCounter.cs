@@ -54,18 +54,10 @@ public class StoveCounter : ABaseCounter, IHasProgress
     {
         if (counterInteracted == this)
         {
-
-            if (CheckObject.isNullOrEmpty(kitchenObjectOnPickPoint) && player.hasKitchenObject() && hasKitchenObjectRecipeOutput( player.GetKitchenObject() ))
-            {
-                KitchenObject.ChangeParent(player, this);
-                ResetStove();
-            }
-            else if (!CheckObject.isNullOrEmpty(kitchenObjectOnPickPoint) && !player.hasKitchenObject())
-            {
-                KitchenObject.ChangeParent(this, player);
-                ResetStove();
-            }
+            ResetStove();
         }
+
+        base.Interact(counterInteracted, player);
     }
 
     private Boolean hasKitchenObjectRecipeOutput( KitchenObject kitchenObject ) {
@@ -84,7 +76,7 @@ public class StoveCounter : ABaseCounter, IHasProgress
 
     public override void InteractAlternate() {
 
-        if (!CheckObject.isNullOrEmpty(kitchenObjectOnPickPoint)) {
+        if (this.hasKitchenObject() && hasKitchenObjectRecipeOutput( this.kitchenObjectOnPickPoint ) ) {
 
             if (currentState == State.Idle) {
                 ChangeToState(State.Frying);
