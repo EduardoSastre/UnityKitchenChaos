@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,6 +7,14 @@ public class PlateKitchenObject : KitchenObject
 {
     [SerializeField] private List<KitchenObjectSO> kitchenObjectSOAllowedList;
     private List<KitchenObjectSO> kitchenObjectSOList;
+
+    public event EventHandler<OnAddedIngredientEventArgs> OnAddedIngredient;
+
+    public class OnAddedIngredientEventArgs : EventArgs { 
+        
+        public KitchenObjectSO kitchenObjectSO;
+
+    }
 
     private void Awake()
     {
@@ -20,6 +29,11 @@ public class PlateKitchenObject : KitchenObject
         if (!existOnList && canBeOnList) {
 
             kitchenObjectSOList.Add(kitchenObject.GetKitchenObjectSO());
+
+            OnAddedIngredient?.Invoke( this, new OnAddedIngredientEventArgs { 
+                kitchenObjectSO = kitchenObject.GetKitchenObjectSO()
+            });
+
             KitchenObject.Destroy( kitchenObject.gameObject , interactable);
         }
     }
