@@ -42,4 +42,13 @@ public class KitchenObject : MonoBehaviour
         }
     }
 
+    public bool IsThisPlateKitchenObject() {
+
+        if (this is PlateKitchenObject) {
+            return true;
+        }
+
+        return false;
+    }
+
 }
