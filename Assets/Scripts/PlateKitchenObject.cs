@@ -37,4 +37,8 @@ public class PlateKitchenObject : KitchenObject
             KitchenObject.Destroy( kitchenObject.gameObject , interactable);
         }
     }
+
+    public List<KitchenObjectSO> GetRecipe() { 
+        return kitchenObjectSOList;
+    }
 }

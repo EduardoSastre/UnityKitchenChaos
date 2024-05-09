@@ -11,7 +11,7 @@ public class DeliveryCounter : ABaseCounter
         {
             if (player.GetKitchenObject().IsThisPlateKitchenObject())
             {
-
+                DeliveryManager.GetInstance().DeliverRecipe( player.GetKitchenObject() as PlateKitchenObject );
                 KitchenObject.Destroy(player.GetKitchenObject().gameObject, player);
 
             }
