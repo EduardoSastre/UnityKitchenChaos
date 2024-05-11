@@ -1,9 +1,13 @@
+using System;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class DeliveryManager : MonoBehaviour
-{
+public class DeliveryManager : MonoBehaviour {
+
+    public event EventHandler OnRecipeAdded;
+    public event EventHandler OnRecipeDelivery;
+
     [SerializeField] private RecipeListSO allRecipesList;
     private List<RecipeSO> waitingRecipesList;
     private int recipesAcumulated = 0;
@@ -31,11 +35,13 @@ public class DeliveryManager : MonoBehaviour
             timer += Time.deltaTime;
 
             if (timer >= timerMax) {
-                RecipeSO randomRecipe = allRecipesList.recipeSOList[Random.Range(0, allRecipesList.recipeSOList.Count)];
+                RecipeSO randomRecipe = allRecipesList.recipeSOList[UnityEngine.Random.Range(0, allRecipesList.recipeSOList.Count)];
 
                 waitingRecipesList.Add(randomRecipe);
                 timer = 0;
                 recipesAcumulated++;
+
+                OnRecipeAdded?.Invoke(this, EventArgs.Empty);
             }    
         }
         
@@ -65,23 +71,17 @@ public class DeliveryManager : MonoBehaviour
             {
                 waitingRecipesList.RemoveAt(i);
                 recipesAcumulated--;
+                OnRecipeDelivery?.Invoke(this, EventArgs.Empty);
                 break;
             }
-        }
-
-        if (isAValidRecipe) {
-
-            Debug.Log("Is a valid recipe!!!");
-
-        }
-        else {
-
-            Debug.Log("Invalid Recipe");
-
         }
     }
 
     public static DeliveryManager GetInstance() {
         return instance;
+    }
+
+    public List<RecipeSO> GetWaitingRecipesList() { 
+        return waitingRecipesList;
     }
 }
