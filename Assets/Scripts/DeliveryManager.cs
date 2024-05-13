@@ -16,6 +16,7 @@ public class DeliveryManager : MonoBehaviour {
     private int MaxRecipesAcumulated = 4;
     private float timer = 0;
     private float timerMax = 4;
+    private int recipesDelivered = 0;
 
     private static DeliveryManager instance;
 
@@ -74,6 +75,7 @@ public class DeliveryManager : MonoBehaviour {
                 waitingRecipesList.RemoveAt(i);
                 recipesAcumulated--;
                 OnRecipeDelivery?.Invoke(this, EventArgs.Empty);
+                AddRecipeDelivered();
                 break;
             }
         }
@@ -93,5 +95,15 @@ public class DeliveryManager : MonoBehaviour {
 
     public List<RecipeSO> GetWaitingRecipesList() { 
         return waitingRecipesList;
+    }
+
+    public void AddRecipeDelivered()
+    {
+        recipesDelivered++;
+    }
+
+    public int GetRecipesDelivered()
+    {
+        return recipesDelivered;
     }
 }

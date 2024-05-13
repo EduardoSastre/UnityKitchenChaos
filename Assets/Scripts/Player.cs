@@ -61,6 +61,8 @@ public class Player : AInteractable
 
     private void Update()
     {
+        if ( !GameManager.GetInstance().canPlay() ) { return; }
+
         HandleMovement();
         CheckCounterCollision();
     }
