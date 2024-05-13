@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,6 +7,8 @@ public abstract class ABaseCounter : AInteractable
 {
 
     [SerializeField] protected KitchenObjectSO kitchenObjectSO;
+
+    public static event EventHandler OnAnyObjectPlacedHere;
 
     public void Start()
     {
@@ -63,6 +66,15 @@ public abstract class ABaseCounter : AInteractable
 
     public virtual void InteractAlternate() { 
         //TODO: FUTURE IMPLEMENTATION
+    }
+
+    public override void SetKitchenObject(KitchenObject kitchenObject)
+    {
+        this.kitchenObjectOnPickPoint = kitchenObject;
+
+        if (!CheckObject.isNullOrEmpty(kitchenObject)) {
+            OnAnyObjectPlacedHere?.Invoke(this, EventArgs.Empty);
+        }
     }
 
 }

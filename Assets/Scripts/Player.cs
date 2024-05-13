@@ -9,6 +9,7 @@ public class Player : AInteractable
 {
 
     public event EventHandler<OnCounterInteractionEventsArgs> OnCounterInteraction;
+    public event EventHandler OnPickedSomething;
 
     public class OnCounterInteractionEventsArgs : EventArgs { 
         public ABaseCounter counter;
@@ -124,6 +125,15 @@ public class Player : AInteractable
         float rotateSpeed = 10f;
         transform.forward = Vector3.Slerp(transform.forward, moveDirection, Time.deltaTime * rotateSpeed); //To get Smoother movement
 
+    }
+
+    public override void SetKitchenObject(KitchenObject kitchenObject)
+    {
+        this.kitchenObjectOnPickPoint = kitchenObject;
+
+        if (!CheckObject.isNullOrEmpty(kitchenObject)) { 
+            OnPickedSomething?.Invoke(this, EventArgs.Empty);
+        }
     }
 
     public bool IsCounterNear() {

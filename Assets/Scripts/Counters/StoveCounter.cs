@@ -7,12 +7,6 @@ using static CuttingCounter;
 
 public class StoveCounter : ABaseCounter, IHasProgress
 {
-    /// <summary>
-    /// ////////////////// MIN 5:47:00
-    /// </summary>
-    /// 
-
-    //TODO: Implement visual behavour in stove counter visual
     [SerializeField] FryingRecipeSO[] fryingRecipeSOArray;
     private float timer = 0;
     private State currentState;

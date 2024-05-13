@@ -10,6 +10,7 @@ public class CuttingCounter : ABaseCounter, IHasProgress
     private int cuttingProgress;
 
     public event EventHandler<IHasProgress.OnProgressChangedEventArgs> OnProgressChanged;
+    public static event EventHandler OnAnyCut;
 
     public override void Interact(ABaseCounter counterInteracted, Player player)
     {
@@ -43,6 +44,7 @@ public class CuttingCounter : ABaseCounter, IHasProgress
                 {
                     progressNormalized = (float)cuttingProgress / cuttingRecipesSO.cuttingMax
                 });
+                OnAnyCut?.Invoke(this, EventArgs.Empty);
 
                 if (cuttingProgress >= cuttingRecipesSO.cuttingMax)
                 {

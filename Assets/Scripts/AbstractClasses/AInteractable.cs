@@ -16,7 +16,7 @@ public abstract class AInteractable: MonoBehaviour
         return pickPoint;
     }
 
-    public void SetKitchenObject( KitchenObject kitchenObject ) { 
+    public virtual void SetKitchenObject( KitchenObject kitchenObject ) { 
         this.kitchenObjectOnPickPoint = kitchenObject;
     }
 

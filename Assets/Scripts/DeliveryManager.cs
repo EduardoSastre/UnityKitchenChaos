@@ -7,6 +7,8 @@ public class DeliveryManager : MonoBehaviour {
 
     public event EventHandler OnRecipeAdded;
     public event EventHandler OnRecipeDelivery;
+    public event EventHandler OnRecipeSuccess;
+    public event EventHandler OnRecipeFailed;
 
     [SerializeField] private RecipeListSO allRecipesList;
     private List<RecipeSO> waitingRecipesList;
@@ -74,6 +76,14 @@ public class DeliveryManager : MonoBehaviour {
                 OnRecipeDelivery?.Invoke(this, EventArgs.Empty);
                 break;
             }
+        }
+
+        if (isAValidRecipe)
+        {
+            OnRecipeSuccess?.Invoke(this, EventArgs.Empty);
+        }
+        else { 
+            OnRecipeFailed?.Invoke(this, EventArgs.Empty);
         }
     }
 
